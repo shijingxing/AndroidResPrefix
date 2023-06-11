@@ -14,7 +14,7 @@ import com.twiceyuan.script.android.res.prefix.helper.FileRenameHelper
 import java.io.File
 import java.util.*
 
-val modulePaths = File("module_paths.txt")
+val modulePaths = File("/Users/exstar/AndroidStudioProjects/VideoChat/AndroidResPrefix/module_paths.txt")
     .readText()
     .split("\n")
     .filter { it.isNotBlank() }
@@ -23,7 +23,7 @@ val properties = Properties().apply {
     load(File("config.properties").inputStream())
 }
 
-val prefix: String = properties["prefix"] as String
+val prefix: String = properties["/Users/exstar/AndroidStudioProjects/VideoChat/AndroidResPrefix/prefix"] as String
 
 val File.subFiles
     get() = listFiles()?.toList() ?: emptyList()
