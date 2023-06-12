@@ -20,7 +20,7 @@ interface ResTypeHandler {
     /**
      * 代码中引用匹配器
      */
-    fun codeComposer(resName: String): String
+    fun codeComposer(resName: String): Array<String>
 
     /**
      * XML 资源中引用匹配器
@@ -46,6 +46,19 @@ interface AttrResourceHandler : ResTypeHandler {
      * 匹配 attr 在 xml 中定义的 tag
      */
     fun tagMatcher(): Regex
+}
+
+interface IDResourceHandler : ResTypeHandler {
+
+    /**
+     * 获取 module 下所有可能存储该 attr 的文件
+     */
+    fun getIdFiles(modulePath: String): List<File>
+
+    /**
+     * 匹配 attr 在 xml 中定义的 tag
+     */
+    fun idMatcher(): Regex
 }
 
 /**

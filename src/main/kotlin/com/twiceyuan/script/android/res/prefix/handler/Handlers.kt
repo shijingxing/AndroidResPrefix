@@ -22,6 +22,10 @@ fun getResTypeHandler(resType: ResType): ResTypeHandler {
         ResType.Animation -> AnimationHandler
         ResType.Menu -> MenuHandler
         ResType.Color -> ColorHandler
+        ResType.ID -> IdHandler
+        else -> {
+            DrawableHandler
+        }
     }
 }
 
@@ -29,7 +33,7 @@ object DrawableHandler : ResTypeHandler, FileResourceHandler, AttrResourceHandle
     override fun getAttrFiles(modulePath: String): List<File> = getValuesDirs(modulePath)
     override fun tagMatcher(): Regex = tagMatcher("drawable")
     override val resType: ResType = ResType.Drawable
-    override fun codeComposer(resName: String): String = "R.drawable.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.drawable.$resName")
     override fun xmlComposer(resName: String): String = "@drawable/$resName"
 
     override fun getResFiles(modulePath: String): List<File> = getFlavorDirs(modulePath)
@@ -41,7 +45,7 @@ object DrawableHandler : ResTypeHandler, FileResourceHandler, AttrResourceHandle
 object MipMapHandler : ResTypeHandler, FileResourceHandler {
 
     override val resType: ResType = ResType.Drawable
-    override fun codeComposer(resName: String): String = "R.mipmap.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.mipmap.$resName")
     override fun xmlComposer(resName: String): String = "@mipmap/$resName"
 
     override fun getResFiles(modulePath: String): List<File> = getFlavorDirs(modulePath)
@@ -53,7 +57,7 @@ object MipMapHandler : ResTypeHandler, FileResourceHandler {
 object LayoutHandler : ResTypeHandler, FileResourceHandler {
 
     override val resType: ResType = ResType.Layout
-    override fun codeComposer(resName: String): String = "R.layout.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.layout.$resName")
     override fun xmlComposer(resName: String): String = "@layout/$resName"
 
     override fun getResFiles(modulePath: String): List<File> = getFlavorDirs(modulePath)
@@ -66,7 +70,7 @@ object StringHandler : ResTypeHandler, AttrResourceHandler {
 
     override val resType: ResType = ResType.String
     override fun tagMatcher(): Regex = tagMatcher("string")
-    override fun codeComposer(resName: String): String = "R.string.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.string.$resName")
     override fun xmlComposer(resName: String): String = "@string/$resName"
 
     override fun getAttrFiles(modulePath: String): List<File> {
@@ -78,7 +82,7 @@ object StringArrayHandler : ResTypeHandler, AttrResourceHandler {
 
     override val resType: ResType = ResType.StringArray
     override fun tagMatcher(): Regex = tagMatcher("string-array")
-    override fun codeComposer(resName: String): String = "R.array.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.array.$resName")
     override fun xmlComposer(resName: String): String = "@array/$resName"
 
     override fun getAttrFiles(modulePath: String): List<File> {
@@ -90,7 +94,7 @@ object StringPluralsHandler : ResTypeHandler, AttrResourceHandler {
 
     override val resType: ResType = ResType.StringPlurals
     override fun tagMatcher(): Regex = tagMatcher("plurals")
-    override fun codeComposer(resName: String): String = "R.plurals.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.plurals.$resName")
     override fun xmlComposer(resName: String): String = "@plurals/$resName"
 
     override fun getAttrFiles(modulePath: String): List<File> {
@@ -102,7 +106,7 @@ object DimensionHandler : ResTypeHandler, AttrResourceHandler {
 
     override val resType: ResType = ResType.Dimension
     override fun tagMatcher(): Regex = tagMatcher("dimen")
-    override fun codeComposer(resName: String): String = "R.dimen.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.dimen.$resName")
     override fun xmlComposer(resName: String): String = "@dimen/$resName"
 
     override fun getAttrFiles(modulePath: String): List<File> {
@@ -114,7 +118,7 @@ object StyleHandler : ResTypeHandler, AttrResourceHandler {
     override val resType: ResType = ResType.Style
     override fun nameStyle(): NameStyle = NameStyle.UpperCamelStyle
     override fun tagMatcher(): Regex = tagMatcher("style")
-    override fun codeComposer(resName: String): String = "R.style.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.style.$resName")
     override fun xmlComposer(resName: String): String = "@style/$resName"
 
     override fun getAttrFiles(modulePath: String): List<File> {
@@ -125,7 +129,7 @@ object StyleHandler : ResTypeHandler, AttrResourceHandler {
 object AnimationHandler : ResTypeHandler, AttrResourceHandler {
     override val resType: ResType = ResType.Animation
     override fun tagMatcher(): Regex = tagMatcher("anim")
-    override fun codeComposer(resName: String): String = "R.anim.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.anim.$resName")
     override fun xmlComposer(resName: String): String = "@anim/$resName"
 
     override fun getAttrFiles(modulePath: String): List<File> {
@@ -139,7 +143,7 @@ object AnimationHandler : ResTypeHandler, AttrResourceHandler {
 
 object MenuHandler : ResTypeHandler, FileResourceHandler {
     override val resType: ResType = ResType.Menu
-    override fun codeComposer(resName: String): String = "R.menu.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.menu.$resName")
     override fun xmlComposer(resName: String): String = "@menu/$resName"
 
     override fun getResFiles(modulePath: String): List<File> = getFlavorDirs(modulePath)
@@ -154,7 +158,7 @@ object ColorHandler : ResTypeHandler, FileResourceHandler, AttrResourceHandler {
     override fun tagMatcher(): Regex = tagMatcher("color")
 
     override val resType: ResType = ResType.Color
-    override fun codeComposer(resName: String): String = "R.color.$resName"
+    override fun codeComposer(resName: String): Array<String> = arrayOf("R.color.$resName")
     override fun xmlComposer(resName: String): String = "@color/$resName"
 
     override fun getResFiles(modulePath: String): List<File> {
@@ -176,7 +180,13 @@ private fun getValuesDirs(modulePath: String): List<File> {
 /**
  * tag 匹配器构造
  */
-private fun tagMatcher(tag: String): Regex = Regex("<$tag [\\s\\S]+?>[\\s\\S]+?</$tag>")
+fun tagMatcher(tag: String): Regex = Regex("<$tag [\\s\\S]+?>[\\s\\S]+?</$tag>")
+
+/**
+ * ID 匹配器构造
+ * android:id="@+id/toolbar"
+ */
+fun idMatcher(tag: String): Regex = Regex("android:$tag=\"@\\+$tag/\\S+?\"")
 
 object KotlinSyntheticRefHandlerCode : CodeRefExtHandler {
 
@@ -220,4 +230,34 @@ object ExternalHandlers {
     // 暂时写死，视情况需要方便后期扩展
     val extCodeHandler = listOf<CodeRefExtHandler>(KotlinSyntheticRefHandlerCode)
     val extXmlHandler = listOf<XmlRefExtHandler>(StyleParentRefHandler)
+}
+
+object IdHandler : ResTypeHandler, IDResourceHandler {
+
+    override val resType: ResType = ResType.ID
+    override fun idMatcher(): Regex = idMatcher("id")
+    override fun codeComposer(resName: String): Array<String> = arrayOf(
+        "R.id.$resName",
+        " $resName.",
+        " $resName?",
+        " $resName!!",
+        " $resName:",
+        " $resName,",
+        " $resName ",
+        " $resName\n",
+        "($resName)",
+        "($resName.",
+        "($resName,",
+        "($resName ",
+        ", $resName)",
+        ",$resName)",
+    )
+    override fun xmlComposer(resName: String): String = "@id/$resName"
+
+    override fun getIdFiles(modulePath: String): List<File> {
+        return getFlavorDirs(modulePath)
+            .map { File(it, "res") }
+            .flatMap { it.subFiles.filter { resDir -> resDir.name == "layout" } }
+            .flatMap { it.subFiles }
+    }
 }

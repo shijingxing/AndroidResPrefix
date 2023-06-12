@@ -55,4 +55,9 @@ enum class ResType {
      * 颜色资源
      */
     Color,
+
+    /**
+     * ID资源
+     */
+    ID,
 }
