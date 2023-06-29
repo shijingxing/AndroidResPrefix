@@ -161,11 +161,14 @@ private fun renameReferences(handler: ResTypeHandler, moduleFile: File) {
 
             for (mapping in renameMapping) {
                 val oldValues = handler.codeComposer(mapping.oldName)
+                if(mapping.resType == ResType.ID && mapping.oldName == "view"){
+                    continue
+                }
                 val newValues = handler.codeComposer(mapping.newName)
                 for (valueIndex in oldValues.indices){
                     val oldValue = oldValues[valueIndex]
                     val newValue = newValues[valueIndex]
-                    var oldValueMat = if(mapping.resType == ResType.ID){
+                    val oldValueMat = if(mapping.resType == ResType.ID){
                         oldValue
                             .replace("(", "\\(")
                             .replace(")", "\\)")
