@@ -2,6 +2,8 @@ package com.twiceyuan.script.android.res.prefix.handler
 
 import com.twiceyuan.script.android.res.prefix.bean.NameStyle
 import com.twiceyuan.script.android.res.prefix.bean.ResType
+import com.twiceyuan.script.android.res.prefix.files.getAllFiles
+import com.twiceyuan.script.android.res.prefix.files.isCodeFile
 import com.twiceyuan.script.android.res.prefix.getFlavorDirs
 import com.twiceyuan.script.android.res.prefix.subFiles
 import java.io.File
@@ -23,6 +25,7 @@ fun getResTypeHandler(resType: ResType): ResTypeHandler {
         ResType.Menu -> MenuHandler
         ResType.Color -> ColorHandler
         ResType.ID -> IdHandler
+        ResType.CodeClass -> CodeClassHandler
         else -> {
             DrawableHandler
         }
@@ -259,5 +262,57 @@ object IdHandler : ResTypeHandler, IDResourceHandler {
             .map { File(it, "res") }
             .flatMap { it.subFiles.filter { resDir -> resDir.name == "layout" } }
             .flatMap { it.subFiles }
+    }
+}
+
+object CodeClassHandler : ResTypeHandler {
+
+    override val resType: ResType = ResType.CodeClass
+    override fun codeComposer(resName: String): Array<String> = arrayOf(
+        " $resName.",
+        " $resName ",
+        " $resName(",
+        " $resName)",
+        " $resName,",
+        " $resName<",
+        " $resName?",
+        " $resName:",
+        " $resName\n",
+        "($resName.",
+        "($resName ",
+        "($resName(",
+        "($resName)",
+        "($resName:",
+        "($resName\n",
+        ".$resName.",
+        ".$resName ",
+        ".$resName(",
+        ".$resName)",
+        ".$resName;",
+        ".$resName\n",
+        "<$resName ",
+        "<$resName<",
+        "<$resName>",
+        "<$resName,",
+        "<$resName?",
+        "!$resName.",
+        "{$resName.",
+        "@$resName)",
+        "@$resName.",
+    )
+
+    override fun xmlComposer(resName: String): String = ".$resName"
+
+    fun getCodeClassFiles(modulePath: String): List<File> {
+        val javaRootDir = getFlavorDirs(modulePath).first {
+            it.name == "main"
+        }.let {
+            File(it, "java")
+        }
+        return getAllFiles(javaRootDir, File::isCodeFile)
+    }
+
+    override fun nameStyle(): NameStyle {
+        return NameStyle.UpperCamelStyle
     }
 }

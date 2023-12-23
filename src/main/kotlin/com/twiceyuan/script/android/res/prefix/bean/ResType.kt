@@ -60,4 +60,9 @@ enum class ResType {
      * ID资源
      */
     ID,
+
+    /**
+     * 代码类
+     */
+    CodeClass,
 }

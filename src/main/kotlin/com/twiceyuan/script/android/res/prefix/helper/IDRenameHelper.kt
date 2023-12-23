@@ -8,7 +8,7 @@ object IDRenameHelper {
     /**
      * android:id="@+id/toolbar"
      */
-    fun renameIdAttr(attrFile: File, prefix: String, tagMatcher: Regex): List<RenameResult> {
+    fun renameIdAttr(attrFile: File, oldPrefix: String, newPrefix: String, tagMatcher: Regex): List<RenameResult> {
         var content = attrFile.readText()
         var isChanged = false
         val results = mutableListOf<RenameResult>()
@@ -23,10 +23,16 @@ object IDRenameHelper {
             val oldName = result[1]?.value ?: return@forEach
             //println("oldName="+oldName)
             // 命名符合规则的跳过
-            if (oldName.startsWith(prefix)) {
+            if (oldName.startsWith(newPrefix)) {
                 return@forEach
             }
-            val newName = prefix + oldName
+            val newName = if (oldName.startsWith(oldPrefix)) {
+                //如果以老的前缀命名
+                oldName.replace(oldPrefix, newPrefix)
+            }else {
+                newPrefix + oldName
+            }
+            //val newName = newPrefix + oldName
             //println("renameAttrName oldName="+oldName+" ,newName=$newName")
             val newNameDefinition = nameDefinition.replace(oldName, newName)
             content = content.replace(nameDefinition, newNameDefinition)

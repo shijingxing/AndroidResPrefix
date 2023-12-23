@@ -5,7 +5,7 @@ import com.twiceyuan.script.android.res.prefix.modulePaths
 import com.twiceyuan.script.android.res.prefix.subFiles
 import java.io.File
 
-private fun getAllFiles(dir: File, fileMatcher: File.() -> Boolean): List<File> {
+fun getAllFiles(dir: File, fileMatcher: File.() -> Boolean): List<File> {
     val codeFiles = mutableListOf<File>()
 
     dir.subFiles.forEach {
