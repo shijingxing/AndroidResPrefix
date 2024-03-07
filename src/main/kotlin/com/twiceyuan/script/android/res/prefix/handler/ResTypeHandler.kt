@@ -15,7 +15,7 @@ interface ResTypeHandler {
     /**
      * 前缀的命名风格，默认是下划线分割命名
      */
-    fun nameStyle(): NameStyle = NameStyle.UnderScoreStyle
+    fun nameStyle(): NameStyle = NameStyle.UnderScoreLowerCaseStyle
 
     /**
      * 代码中引用匹配器

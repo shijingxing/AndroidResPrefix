@@ -17,6 +17,11 @@ val modulePaths = File("AndroidResPrefix/module_paths.txt")
     .split("\n")
     .filter { it.isNotBlank() }
 
+val modulePathsImpact = File("AndroidResPrefix/module_paths_impact.txt")
+    .readText()
+    .split("\n")
+    .filter { it.isNotBlank() }
+
 val properties = Properties().apply {
     load(File("AndroidResPrefix/config.properties").inputStream())
 }
@@ -30,7 +35,7 @@ val File.subFiles
 private val renameMapping = hashSetOf<RenamedMapping>()
 
 fun main() {
-    renameResInModule(oldPrefix, newPrefix, modulePaths)
+    renameResInModule(oldPrefix, newPrefix, modulePaths, modulePathsImpact)
     //test2()
 
 }
@@ -67,16 +72,23 @@ fun test2(){
     }
 }
 
-private fun renameResInModule(oldPrefix: String?, newPrefix: String, modulePaths: List<String>) {
+private fun renameResInModule(oldPrefix: String?, newPrefix: String, modulePaths: List<String>, modulePathsImpact: List<String>) {
 
     val modules = modulePaths.map { File(it) }
+    val modulesImpact = if(modulePathsImpact.isNullOrEmpty()){
+        modulePaths.map { File(it) }
+    }else {
+        modulePathsImpact.map { File(it) }
+    }
+    println("renameResInModule modules=$modules")
+    println("renameResInModule modulesImpact=$modulesImpact")
     /*println("-----------------")
     println(modulePaths)
     modules.forEach {
         println(it.absolutePath)
     }*/
     ResType.values().forEach {
-        renameResourceByType(oldPrefix, newPrefix, it, modules)
+        renameResourceByType(oldPrefix, newPrefix, it, modules, modulesImpact)
     }
 }
 
@@ -90,7 +102,7 @@ fun getFlavorDirs(modulePath: String): List<File> {
 /**
  * 重命名一类资源
  */
-private fun renameResourceByType(oldPrefix: String?, newPrefix: String, resType: ResType, modules: List<File>) {
+private fun renameResourceByType(oldPrefix: String?, newPrefix: String, resType: ResType, modules: List<File>, modulesImpact: List<File>) {
     val handler = getResTypeHandler(resType)
 
     // 重命名文件类型资源
@@ -172,7 +184,7 @@ private fun renameResourceByType(oldPrefix: String?, newPrefix: String, resType:
     }
 
     // 处理资源引用
-    modules.forEach { renameReferences(handler, it) }
+    modulesImpact.forEach { renameReferences(handler, it) }
     renameMapping.clear()
 }
 
@@ -203,7 +215,7 @@ private fun renameReferences(handler: ResTypeHandler, moduleFile: File) {
                     }
                     //println("oldValue="+oldValue+",newValue="+newValue)
                     // 避免 android.R.xxx 也被匹配并且替换，排除 R.xxx 前面有 . 的情况
-                    println("oldValueMat="+oldValueMat)
+                    //println("oldValueMat="+oldValueMat)
                     val oldValueMatcher = Regex("(?<!android.)$oldValueMat")
                     val matchResults = oldValueMatcher.findAll(content).toList()
                     //println("matchResults="+matchResults+", oldValueMatcher="+oldValueMatcher)

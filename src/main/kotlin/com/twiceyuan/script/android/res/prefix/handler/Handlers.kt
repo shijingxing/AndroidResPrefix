@@ -21,6 +21,8 @@ fun getResTypeHandler(resType: ResType): ResTypeHandler {
         ResType.StringPlurals -> StringPluralsHandler
         ResType.Dimension -> DimensionHandler
         ResType.Style -> StyleHandler
+        ResType.Attr -> AttrHandler
+        ResType.DeclareStyleable -> DeclareStyleableHandler
         ResType.Animation -> AnimationHandler
         ResType.Menu -> MenuHandler
         ResType.Color -> ColorHandler
@@ -129,6 +131,35 @@ object StyleHandler : ResTypeHandler, AttrResourceHandler {
     }
 }
 
+object AttrHandler : ResTypeHandler, AttrResourceHandler {
+    override val resType: ResType = ResType.Attr
+    override fun tagMatcher(): Regex = tagMatcher2("attr")
+    override fun codeComposer(resName: String): Array<String> = arrayOf("_$resName")
+    override fun xmlComposer(resName: String): String = "app:$resName"
+
+    override fun getAttrFiles(modulePath: String): List<File> {
+        return getValuesDirs(modulePath)
+    }
+}
+
+//declare-styleable
+object DeclareStyleableHandler : ResTypeHandler, AttrResourceHandler {
+    override val resType: ResType = ResType.DeclareStyleable
+
+    override fun nameStyle(): NameStyle = NameStyle.UpperCamelStyle
+    override fun tagMatcher(): Regex = tagMatcher("declare-styleable")
+    override fun codeComposer(resName: String): Array<String> = arrayOf(
+        ".${resName}_",
+        ".$resName",
+        ".$resName,",
+    )
+    override fun xmlComposer(resName: String): String = "xxxxxx:$resName"
+
+    override fun getAttrFiles(modulePath: String): List<File> {
+        return getValuesDirs(modulePath)
+    }
+}
+
 object AnimationHandler : ResTypeHandler, AttrResourceHandler {
     override val resType: ResType = ResType.Animation
     override fun tagMatcher(): Regex = tagMatcher("anim")
@@ -184,6 +215,11 @@ private fun getValuesDirs(modulePath: String): List<File> {
  * tag 匹配器构造
  */
 fun tagMatcher(tag: String): Regex = Regex("<$tag [\\s\\S]+?>[\\s\\S]+?</$tag>")
+
+/**
+ * tag 匹配器构造，无后驱
+ */
+fun tagMatcher2(tag: String): Regex = Regex("<$tag [\\s\\S]+?/>")
 
 /**
  * ID 匹配器构造
@@ -284,19 +320,21 @@ object CodeClassHandler : ResTypeHandler {
         "($resName)",
         "($resName:",
         "($resName\n",
+        "($resName<",
         ".$resName.",
         ".$resName ",
         ".$resName(",
         ".$resName)",
         ".$resName;",
         ".$resName\n",
+        ".${resName}_",
         "<$resName ",
         "<$resName<",
         "<$resName>",
         "<$resName,",
         "<$resName?",
         "!$resName.",
-        "{$resName.",
+        "\\{$resName.",
         "@$resName)",
         "@$resName.",
     )

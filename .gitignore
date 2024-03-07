@@ -1,5 +1,6 @@
 /config.properties
 /module_paths.txt
+/module_paths_impact.txt
 /ignore_res.txt
 /build
 /.idea

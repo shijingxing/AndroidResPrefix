@@ -10,14 +10,17 @@ object AttrRenameHelper {
         var isChanged = false
         val results = mutableListOf<RenameResult>()
         val nameMatcher = Regex("name=\"(.*?)\"")
+        //println("renameAttrName:"+tagMatcher)
         tagMatcher.findAll(content).forEach { tagResult ->
             val result = nameMatcher.find(tagResult.value)?.groups ?: return@forEach
+            //println("tagResult=${tagResult.value}::${result.size}")
             val nameDefinition = result[0]?.value ?: return@forEach
             val oldName = result[1]?.value ?: return@forEach
             // 命名符合规则的跳过
             if (oldName.startsWith(newPrefix)) {
                 return@forEach
             }
+            println("$oldName---$oldPrefix---$newPrefix")
             val newName = if (oldName.startsWith(oldPrefix)) {
                 //如果以老的前缀命名
                 oldName.replace(oldPrefix, newPrefix)

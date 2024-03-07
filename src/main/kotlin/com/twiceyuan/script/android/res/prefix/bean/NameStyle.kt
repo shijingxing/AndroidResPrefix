@@ -11,12 +11,20 @@ enum class NameStyle {
     /**
      * 下划线分割命名（默认）
      */
-    UnderScoreStyle
+    UnderScoreStyle,
+
+    /**
+     * 下划线分割命名（小写）
+     */
+    UnderScoreLowerCaseStyle
 }
 
 fun NameStyle.getNameStylePrefix(prefix: String) = when (this) {
     NameStyle.UnderScoreStyle -> {
         prefix
+    }
+    NameStyle.UnderScoreLowerCaseStyle -> {
+        prefix.lowercase()
     }
     NameStyle.UpperCamelStyle -> {
         prefix.toUpperCamelStyle()

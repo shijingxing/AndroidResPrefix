@@ -42,6 +42,16 @@ enum class ResType {
     Style,
 
     /**
+     * Attr 定义
+     */
+    Attr,
+
+    /**
+     * declare-styleable 定义
+     */
+    DeclareStyleable,
+
+    /**
      * Anim 资源
      */
     Animation,
