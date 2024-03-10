@@ -39,3 +39,21 @@ fun String.toUpperCamelStyle(): String {
     val words = split("_").filter { it.isNotBlank() }
     return words.joinToString("") { it.capitalize() }
 }
+
+/**
+ * 将下划线后第一个字母大写，首字母原来是大写就大写原来是小写就小写
+ */
+fun String.toUpperCamelStyle2(): String {
+    val words = split("_").filter { it.isNotBlank() }
+    val sb = java.lang.StringBuilder()
+    var first = true
+    words.forEach {
+        if(first){
+            first = false
+            sb.append(it)
+        }else {
+            sb.append(it.capitalize())
+        }
+    }
+    return sb.toString()
+}

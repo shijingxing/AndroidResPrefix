@@ -34,6 +34,8 @@ val File.subFiles
 
 private val renameMapping = hashSetOf<RenamedMapping>()
 
+val kExtensionsToBinding = true
+
 fun main() {
     renameResInModule(oldPrefix, newPrefix, modulePaths, modulePathsImpact)
     //test2()
@@ -201,7 +203,23 @@ private fun renameReferences(handler: ResTypeHandler, moduleFile: File) {
                 if(mapping.resType == ResType.ID && mapping.oldName == "view"){
                     continue
                 }
-                val newValues = handler.codeComposer(mapping.newName)
+                var mappingNewName = mapping.newName
+                val newValues = handler.codeComposer(mappingNewName)
+                if(kExtensionsToBinding){
+                    if(
+                        (mapping.resType == ResType.ID) &&
+                        (codeFile.name.contains("Activity") || codeFile.name.contains("Fragment"))
+                    ){
+                        mappingNewName = "mViewBinding.${mappingNewName.toUpperCamelStyle2()}"
+                        val newBindingValues = handler.codeComposer(mappingNewName)
+                        newValues.forEachIndexed { index, s ->
+                            if(!s.contains("R.id")){
+                                newValues[index] = newBindingValues[index]
+                            }
+                        }
+                    }
+                }
+
                 for (valueIndex in oldValues.indices){
                     val oldValue = oldValues[valueIndex]
                     val newValue = newValues[valueIndex]
